@@ -26,7 +26,12 @@ ENV OLLAMA_HOST=0.0.0.0
 ENV OLLAMA_MODELS=/root/.ollama
 
 # ---- Pull FREE coding model ----
-RUN ollama pull deepseek-coder:6.7b
+RUN bash -c "ollama serve & \
+    until curl --silent --output /dev/null --fail http://localhost:11434/api/tags; do \
+        echo 'Waiting for Ollama server to start...'; \
+        sleep 1; \
+    done; \
+    ollama pull deepseek-coder:6.7b"
 
 # ---- Expose port ----
 EXPOSE 8000
