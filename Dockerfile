@@ -1,15 +1,14 @@
 # ---- Base image ----
 FROM python:3.11-slim
 
-# ---- System dependencies (EXPLICIT) ----
+# ---- System dependencies ----
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     zstd \
-    && zstd --version \
     && rm -rf /var/lib/apt/lists/*
 
-# ---- Install Ollama (after zstd exists) ----
+# ---- Install Ollama ----
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # ---- Working directory ----
@@ -22,12 +21,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # ---- App code ----
 COPY . .
 
-# ---- Ollama environment ----
+# ---- Ollama config ----
 ENV OLLAMA_HOST=0.0.0.0
 ENV OLLAMA_MODELS=/root/.ollama
 
-# ---- Pull SMALL model (Railway-safe) ----
-RUN ollama pull phi-3:mini
+# ---- Pull FREE coding model ----
+RUN ollama pull deepseek-coder:6.7b
 
 # ---- Expose port ----
 EXPOSE 8000
